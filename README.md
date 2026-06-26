@@ -32,10 +32,10 @@ supports a compact/detailed toggle for the converted formats.
 * Zoom, pan, and search for nodes in the graph.
 * Graph information with compact and detailed view toggle.
 * Node hierarchy view and search with interactive navigation in code and visual.
-* **DOT** visualization graph: interactive edge tracing search and highlight.
+* **DOT** visualization graph with interactive tracing and highlight.
 * **Data Files** structure and top rows visualization.
-* **Program Files** code and structure visualization with call graph and external resources.
-* **Visual Web** command — prompts for a URL, opens it in the built-in Simple
+* **Program Files** code and structure interactive visualization with call graph, internal and external resources.
+* **Visual Web** command prompts for a URL, opens it in the built-in Simple
   Browser, fetches the *served* HTML, and graphs it through the HTML converter
   (served HTML only; client-rendered SPA content won't appear).
 
@@ -55,10 +55,8 @@ To visualize a live web page, run command (<kbd>cmd/ctrl</kbd>+<kbd>shift</kbd>+
 
 ## Notes
 
-This extension uses
-[`@vscode/extension-telemetry`](https://github.com/microsoft/vscode-extension-telemetry)
-(Microsoft Application Insights) to collect anonymous usage data. Only coarse, non-identifying events such as activate, preview, and webview are collected when default telemetry is turned on. Document contents, file names/paths, and URLs are never collected.
-Telemetry follows your VS Code setting: `"telemetry.telemetryLevel"`.
+This extension uses standard Microsoft VSCode telemetry
+[`@vscode/extension-telemetry`](https://github.com/microsoft/vscode-extension-telemetry) to collect anonymous usage data when turned on. Only non-identifying events are sent; user data, contents, file names/paths, and URLs are never collected. You can turn it off for this extension alone with the `linear-code.telemetry.enable` setting, and it always also respects your global VS Code setting `"telemetry.telemetryLevel"`.
 
 
 ## Release Notes
