@@ -1,6 +1,6 @@
 # Linear Code
 
-**See any file as an interactive graph - 25+ formats, live, without leaving your editor.**
+**See any file as an interactive graph - 30+ formats, live, without leaving your editor.**
 
 Open a file and Linear Code draws its *structure* beside the source: a JSON tree, a
 CSV schema, a Parquet footer, a Python call graph, an OWL ontology, a PDF outline.
@@ -13,9 +13,14 @@ Use it to:
 * **Read a data file you can't read by eye.** CSV, Parquet, ORC, Avro, Pickle, RDS,
   and log files open as a schema with per-column types, unique/empty counts, and a
   top-rows preview - including the binary ones. No pandas, no notebook, no conversion step.
-* **Understand code you didn't write.** Python, JavaScript/TypeScript, PHP, R, Shell,
-  and Jupyter notebooks become a call graph: functions and classes as nodes, calls as
-  edges, plus the imports, database/URL/file resources, and CLI args each one touches.
+* **Understand code you didn't write.** Python, JavaScript/TypeScript, C/C++, Go, Rust, PHP, R, Ruby/Rails,
+  Shell, and Jupyter notebooks become a call graph: functions and classes as nodes, calls as
+  edges, plus the imports, database/URL/file resources, and CLI args each one touches. Rails
+  apps also get their ActiveRecord models and associations, routes, and views.
+* **Get your bearings in an unfamiliar repo.** Point **Visual Project** at a folder and
+  it maps the structure: directories as nodes carrying per-file-type counts and total
+  size, files color-coded by type - so you can see a codebase's shape before opening
+  a single file.
 * **Inspect a schema or spec at a glance.** OpenAPI/Swagger as an endpoint map, XSD as
   a class diagram, RDF/OWL/Turtle as an ontology, and DTD, GraphML, DOT/Graphviz, XML,
   YAML, Markdown, PDF, and HTML each rendered in the shape that suits them.
@@ -24,6 +29,10 @@ Use it to:
   the real result of calling a read-only tool.
 * **Graph a live web page or REST API.** Point **Visual Web** or **Visual API** at a URL
   and read the served page, or the API's endpoints and live response data.
+* **See what a package really pulls in - before you install it.** **Visual Package**
+  takes a name from PyPI, npm, crates.io, or RubyGems and draws its dependency tree:
+  versions and version requirements, the optional extras each one hides behind a
+  feature flag, and - on request - the packages that depend on it.
 
 Everything renders locally in a VS Code webview - no server, no export step, and your
 files never leave the editor.
@@ -50,6 +59,12 @@ The **Visual MCP** command opens a session against an MCP server and maps everyt
 
 The **Visual API** command finds an API's OpenAPI/Swagger descriptor from just its base URL - here Context7's public API (OpenAPI 3.0.0, 16 endpoints across 6 tags), in Compact view. Blue tag nodes group the violet endpoint nodes, each badged with its HTTP method and carrying its summary, auth, request body and response codes; the green schema nodes show the request/response structures and link to each other by field, so `SearchResponse` points at `Library` along its `results` field. Detailed view adds the real JSON the API returned when scanned.
 
+### PACKAGE - dependencies in Python PyPi, Javascript NPM, Ruby Gem or Rust Crates repositories
+
+<img src="https://raw.githubusercontent.com/linear-code/vscode/main/media/ex_package.gif" />
+
+The **Visual Package** command takes a package name from PyPI, npm, crates.io, or RubyGems and maps its dependency tree straight from the registry - each node a package with its version, and edges labeled with the version requirement. A shared dependency is a single reused node, so you see what's actually pulled in. Compact shows the direct runtime dependencies; Detailed adds the optional/feature-gated ones and one tier deeper, and can pull in the packages that depend *on* yours (in green). Node color separates the primary dependencies from optional and not-yet-resolved ones at a glance.
+
 ### Web - graph a live page straight from its URL
 <img src="https://raw.githubusercontent.com/linear-code/vscode/main/media/ex_web.jpg" />
 
@@ -60,6 +75,12 @@ The **Visual Web** command opens a URL in the built-in browser and graphs its *s
 <img src="https://raw.githubusercontent.com/linear-code/vscode/main/media/ex_html.jpg" />
 
 `Google.html` as a page-structure graph: the container hierarchy merged with the functions and call graph parsed out of the page's embedded `<script>` blocks.
+
+### PROJECT - folder and file structure
+
+<img src="https://raw.githubusercontent.com/linear-code/vscode/main/media/ex_project.gif" />
+
+The **Visual Project** command walks a folder and maps its structure: each directory is a node carrying its per-file-type counts and total size, linked to its children. Files are color-coded by type - program, data, doc, image, config, and so on - so a codebase's shape and where its weight sits are visible before you open anything. Compact shows the folder tree alone; Detailed adds the individual files.
 
 ### JSON - nested records as a navigable tree
 
@@ -109,16 +130,23 @@ The **Visual Web** command opens a URL in the built-in browser and graphs its *s
 | HTML | `.html`, `.htm` | Page structure (container hierarchy, elements as rows, embedded JS, images, external resources). |
 | **PROGRAMS:** |||
 | JavaScript / TypeScript | `.js` `.jsx` `.ts` `.tsx` `.mjs` `.cjs` | Program structure + scope-resolved call graph (functions, classes, imports, detected resources) visualization. |
+| C / C++ | `.c` `.h` `.cpp` `.cc` `.cxx` `.hpp` `.hxx` `.hh` `.ino` | Program structure + call graph (functions, classes/structs/enums with members, inheritance, methods, `#include` modules, file/URL resources, `getenv`/`#define`) visualization. |
+| Go | `.go` | Program structure + call graph (functions, methods, structs/interfaces with fields and embedding, `import` modules, `pkg.Func` external calls, file/HTTP resources, `os.Getenv`/`flag`) visualization. |
+| Rust | `.rs` | Program structure + call graph (functions, structs/enums/traits with fields and variants, `impl` methods and trait implementations, `use`/`mod` modules, `Type::fn` and macro external calls, file/HTTP resources, `env::var`/args) visualization. |
 | PHP | `.php` | Program structure + type-level relations and resources visualization. |
 | Shell | `.sh`, `.bash`, `.zsh`, `.ksh` | Shell script structure, call graph and resources visualization. |
 | Python | `.py`, `.pyw` | Program structure + call graph (functions, classes, imported modules, resources) visualization. |
 | R | `.R`, `.r` | Program structure + call graph (functions, modules, library calls, data frames with columns, file/URL resources, args/env) visualization. |
+| Ruby / Rails | `.rb`, `.rake`, `.gemspec` | Program structure + call graph (classes, modules, methods), ActiveRecord models with associations, named hash/array data objects with create/read/write relations, and HTTP/file/route/view resources. |
 | Jupyter Notebook | `.ipynb` | Notebook and program structure with call graph and resources. |
 | **OTHER:** |||
 | WEB | `url` | Web page open and static structure (html, js) visualization like in HTML. |
 | REST API | `url` | REST API endpoints and structure visualization. |
 | MCP server | `url` | MCP server map: tools with their input schemas, plus prompts and resources. |
-
+| NPM package | `name` | **Visual Package: NPM** — search a package on npmjs.com, resolve its latest manifest, and map the dependency tree: packages as nodes (version, engines, and `core packages`/`extra packages` lists with counts) linked by `depends` relations labeled with the semver range; shared dependencies are reused nodes. Compact shows the package and its `dependencies`; Detailed adds `peerDependencies`/`optionalDependencies` (edge-labeled `peer`/`optional`) and one deeper tier, fetched lazily only when you switch. `devDependencies` are excluded. Optionally adds **dependant counts** — npm publishes no list of dependent names, only totals. |
+| Gem package | `name` | **Visual Package: Gem** — search a gem on rubygems.org, resolve its latest version, and map the dependency tree: gems as nodes (version, summary, license, and a `core packages` list with count) linked by `depends` relations labeled with the requirement; shared dependencies are reused nodes. RubyGems has no optional-dependency concept, so `development` dependencies are excluded and there is no extra tier — Detailed adds the deeper layer. Optionally adds one layer of green **dependant** gems; the API returns names only, so the first N are shown with the true total as a row. |
+| Crates package | `name` | **Visual Package: Crates** — search a crate on crates.io, resolve its latest non-yanked version from Cargo's sparse index, and map the dependency tree: crates as nodes (version, rust-version, and `core packages`/`extra packages` lists with counts) linked by `depends` relations labeled with the version requirement; shared dependencies are reused nodes. Compact shows the crate and its normal dependencies; Detailed adds the **optional, feature-gated** ones — each edge labeled with the Cargo feature that enables it (`derive`) — plus one deeper tier, fetched lazily. `dev` and `build` dependencies are excluded. Optionally adds one layer of green **dependant** crates — the crates that depend on this one, most-depended-on first. |
+| PyPI package | `name` | **Visual Package: PyPI** — search a package, resolve its latest-version dependency metadata from pypi.org, and map the dependency tree: packages as nodes (version, requires-python, summary, and `core packages`/`extra packages` lists with counts) linked by `depends` relations labeled with the version specifier; shared dependencies are reused nodes. Compact shows the package and its direct runtime dependencies; Detailed adds the optional (extra-gated) dependencies and one deeper tier — fetched lazily only when you switch to Detailed. Optionally adds **dependant counts** — PyPI publishes no list of dependent names, only totals. |
 
 
 ## Linear Code features
@@ -141,25 +169,15 @@ The **Visual Web** command opens a URL in the built-in browser and graphs its *s
   schemas, plus its prompts and resources. Detailed view expands each tool's input
   schema and can show a real tool result: you pick which read-only tools to run and
   type their arguments.
+* **Visual Project** command prompts for a folder (default: the workspace root) and
+  maps its folder/file structure — each folder is a node showing its per-file-type
+  counts, file count and total size, and each file is a leaf node colored by its
+  type group (program, data, doc, image, config, graph, web). File leaf nodes appear
+  in Detailed view; Compact shows the folder tree alone. Noise dirs (`.git`,
+  `node_modules`, build outputs) are skipped.
+* **Visual Package: (PyPi | Crates | Npm | Gems):** command prompts for a package name, connects to package management repository and
+  maps its dependent packages structure to graph nodes and relation.
 
-## Usage
-
-Open a supported file in the active editor. With `linear-code.openAutomatically`
-enabled (the default) the preview opens on its own; otherwise trigger it via:
-
-* the graph icon in the editor title bar, or
-* the editor context menu → **Visual**, or
-* the command palette (<kbd>cmd/ctrl</kbd>+<kbd>shift</kbd>+<kbd>p</kbd>) →
-  **LinearCode: Visual** (command `linear-code.visualCode`).
-
-To visualize a live web page, run command (<kbd>cmd/ctrl</kbd>+<kbd>shift</kbd>+<kbd>p</kbd>) → **LinearCode: Visual Web**
-(command `linear-code.visualWeb`).
-
-To visualize a live REST API, run command (<kbd>cmd/ctrl</kbd>+<kbd>shift</kbd>+<kbd>p</kbd>) → **LinearCode: Visual API**
-(command `linear-code.visualApi`).
-
-To visualize a live MCP server, run command (<kbd>cmd/ctrl</kbd>+<kbd>shift</kbd>+<kbd>p</kbd>) → **LinearCode: Visual MCP**
-(command `linear-code.visualMcp`).
 
 ## Notes
 
