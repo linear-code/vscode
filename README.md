@@ -24,6 +24,11 @@ Use it to:
 * **Inspect a schema or spec at a glance.** OpenAPI/Swagger as an endpoint map, XSD as
   a class diagram, RDF/OWL/Turtle as an ontology, and DTD, GraphML, DOT/Graphviz, XML,
   YAML, Markdown, PDF, and HTML each rendered in the shape that suits them.
+* **Browse a knowledge bundle, not just a file.** An **OKF** (Open Knowledge Format)
+  document renders its frontmatter as a typed, color-coded concept node with its schema
+  as a real table - and every concept it references becomes a node showing that
+  document's own type, title and status. Click one to open its graph, and walk the
+  bundle the way its authors linked it.
 * **See what an MCP server actually exposes.** Point **Visual MCP** at an MCP URL and
   get its tools with their input schemas, prompts, and resources - plus, on request,
   the real result of calling a read-only tool.
@@ -122,6 +127,7 @@ The **Visual Project** command walks a folder and maps its structure: each direc
 | LOG | `.log` | Log file structure and statistic with top-rows data preview. |
 | **DOCUMENTS:** |||
 | Markdown | `.md`, `.markdown` | Document structure: the heading outline as a section tree, with content rows and detected resources (images, links). |
+| OKF | `.md` (with `type:` frontmatter) | Open Knowledge Format concept: the YAML frontmatter as a typed root node (colored by `type`, with a per-bundle legend), `# Schema` as a real column table, headings and sub-headings as nested section nodes, and references as attribute rows. Documents the concept links to — body links plus `sources`, `computation`, `executor` and `attester` paths — become their own nodes carrying *that* document's frontmatter; click one to open its graph. `index.md` renders as a bundle hub. |
 | PDF | `.pdf` | Document structure: metadata header, outline/bookmark + page hierarchy, and detected resources (images, internal/external links, embedded files). |
 | Graphviz / DOT | `.dot`, `.gv` | The DOT source rendered via d3-graphviz (SVG). |
 | RDF/XML | `.rdf` | An OWL/RDFS ontology class diagram (classes as nodes, properties as rows/edges). |
@@ -159,6 +165,12 @@ The **Visual Project** command walks a folder and maps its structure: each direc
 * **Graph Files** visualization with interactive tracing and highlight.
 * **Data Files** structure and top rows visualization.
 * **Program Files** code and structure interactive visualization with call graph, internal and external resources.
+* **OKF knowledge bundles** — a `.md` file whose frontmatter declares a `type` renders
+  as an OKF concept instead of a plain Markdown outline: frontmatter keys as attribute
+  rows, `# Schema` as a column table, and nodes colored by concept type with a legend
+  built from the types that bundle actually uses. Linked concepts resolve from disk and
+  are **clickable** — opening a linked document's graph — and unresolved links stay
+  visible rather than disappearing, since a link may point at knowledge not yet written.
 * **Visual Web** command prompts for a URL, opens it in the built-in Simple
   Browser, fetches the *served* HTML, and graphs it through the HTML converter
   (served HTML only; client-rendered SPA content won't appear).

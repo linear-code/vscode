@@ -1,5 +1,7 @@
 # Change Log
 
+**0.3.5** - new OKF (Open Knowledge Format) knowledge bundle visualization with click-through navigation between linked concepts
+
 **0.3.4** - new Visual Package dependency graph for Python PyPi, Rust Crates, NodeJs NMP and Ruby Gems
 
 **0.3.3** - new Rust language
