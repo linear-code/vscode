@@ -29,11 +29,27 @@ Use it to:
   as a real table - and every concept it references becomes a node showing that
   document's own type, title and status. Click one to open its graph, and walk the
   bundle the way its authors linked it.
+* **See an Obsidian vault as the graph it already is.** Open any note and the whole vault
+  renders around it: every note a node colored by its frontmatter `type`, every
+  `[[wikilink]]` an edge labeled with the field that states it (`employed_by:: [[Acme]]`).
+  Detailed view adds each note's properties, tags and task counts, plus orphan notes and
+  links to notes that don't exist yet. Click a note to re-center the graph on it.
+* **Read a LinkML schema as the model it describes.** A **LinkML** YAML file renders as a
+  conceptual model rather than a key tree: classes as nodes carrying their own slots,
+  `is_a` edges for the taxonomy, labeled associations between classes, and enums with
+  their coded values. The slots nothing references are collected into one node, so a
+  generated schema shows you its own loose ends.
 * **See what an MCP server actually exposes.** Point **Visual MCP** at an MCP URL and
   get its tools with their input schemas, prompts, and resources - plus, on request,
   the real result of calling a read-only tool.
 * **Graph a live web page or REST API.** Point **Visual Web** or **Visual API** at a URL
   and read the served page, or the API's endpoints and live response data.
+* **Find out which backends a web app talks to.** Point **Visual Web API** at a page and it
+  reads the served HTML and its scripts, works out which API endpoints the code calls, and
+  maps them grouped by host - with request and response structures where the host publishes
+  an OpenAPI descriptor or a safe GET can be sampled.
+* **See which files are churning.** Any file's preview carries a cold/warm/hot dot from its
+  git history - how recently and how often it changed, and who has been changing it.
 * **See what a package really pulls in - before you install it.** **Visual Package**
   takes a name from PyPI, npm, crates.io, or RubyGems and draws its dependency tree:
   versions and version requirements, the optional extras each one hides behind a
@@ -118,6 +134,7 @@ The **Visual Project** command walks a folder and maps its structure: each direc
 | GraphML | `.graphml` | A node/edge graph hierarchy visualization. |
 | YAML | `.yaml`, `.yml` | The mapping/sequence tree. |
 | OpenAPI / Swagger | `.yaml`, `.json` | An endpoint map: tags as roots, one node per operation (method, path, parameters, responses). |
+| LinkML | `.yaml`, `.yml` (with `name:` + `classes`/`slots`/`enums`) | The conceptual model the schema describes: each class a node with its own slots as `slot: range` rows, `is_a` inheritance edges, labeled associations where a slot's range is another class, and enums as nodes of values with their codes. Detailed adds descriptions and slot facets, custom types, and a **Disconnected Slots** node holding the slots no class uses. |
 | CSV / TSV | `.csv`, `.tsv` | Table schema plus a top-rows data preview. |
 | Parquet | `.parquet` | Table schema and per-column statistic with a data preview. |
 | Pickle | `.pkl` | Dict/array schema and a data preview. |
@@ -128,6 +145,7 @@ The **Visual Project** command walks a folder and maps its structure: each direc
 | **DOCUMENTS:** |||
 | Markdown | `.md`, `.markdown` | Document structure: the heading outline as a section tree, with content rows and detected resources (images, links). |
 | OKF | `.md` (with `type:` frontmatter) | Open Knowledge Format concept: the YAML frontmatter as a typed root node (colored by `type`, with a per-bundle legend), `# Schema` as a real column table, headings and sub-headings as nested section nodes, and references as attribute rows. Documents the concept links to — body links plus `sources`, `computation`, `executor` and `attester` paths — become their own nodes carrying *that* document's frontmatter; click one to open its graph. `index.md` renders as a bundle hub. |
+| Obsidian | `.md` (with `[[wikilinks]]`, `key:: value` fields, or inside a `.obsidian/` vault) | Vault knowledge graph: every note in the vault is a node (colored by frontmatter `type`, with a per-vault legend) and every resolved `[[wikilink]]` or embed an edge, labeled with the frontmatter key or dataview field that states it. Links resolve the way Obsidian does — by name, alias, or path. Compact shows the linked notes; Detailed adds each note's properties, aliases, tags, headings, task and link counts, orphan notes, and gray nodes for links to notes not yet written. Click a note to open its graph; unsaved edits relink live. |
 | PDF | `.pdf` | Document structure: metadata header, outline/bookmark + page hierarchy, and detected resources (images, internal/external links, embedded files). |
 | Graphviz / DOT | `.dot`, `.gv` | The DOT source rendered via d3-graphviz (SVG). |
 | RDF/XML | `.rdf` | An OWL/RDFS ontology class diagram (classes as nodes, properties as rows/edges). |
@@ -148,6 +166,7 @@ The **Visual Project** command walks a folder and maps its structure: each direc
 | **OTHER:** |||
 | WEB | `url` | Web page open and static structure (html, js) visualization like in HTML. |
 | REST API | `url` | REST API endpoints and structure visualization. |
+| WEB API | `url` | **Visual Web API** — open a page, then map the backend APIs its code calls: endpoints grouped by host, with request/response structures from each host's OpenAPI descriptor where it has one, or inferred from live responses where it doesn't. Static read of the served HTML and scripts only — the page's JavaScript is never executed, so requests a page assembles at runtime are not discovered. |
 | MCP server | `url` | MCP server map: tools with their input schemas, plus prompts and resources. |
 | NPM package | `name` | **Visual Package: NPM** — search a package on npmjs.com, resolve its latest manifest, and map the dependency tree: packages as nodes (version, engines, and `core packages`/`extra packages` lists with counts) linked by `depends` relations labeled with the semver range; shared dependencies are reused nodes. Compact shows the package and its `dependencies`; Detailed adds `peerDependencies`/`optionalDependencies` (edge-labeled `peer`/`optional`) and one deeper tier, fetched lazily only when you switch. `devDependencies` are excluded. Optionally adds **dependant counts** — npm publishes no list of dependent names, only totals. |
 | Gem package | `name` | **Visual Package: Gem** — search a gem on rubygems.org, resolve its latest version, and map the dependency tree: gems as nodes (version, summary, license, and a `core packages` list with count) linked by `depends` relations labeled with the requirement; shared dependencies are reused nodes. RubyGems has no optional-dependency concept, so `development` dependencies are excluded and there is no extra tier — Detailed adds the deeper layer. Optionally adds one layer of green **dependant** gems; the API returns names only, so the first N are shown with the true total as a row. |
@@ -171,11 +190,29 @@ The **Visual Project** command walks a folder and maps its structure: each direc
   built from the types that bundle actually uses. Linked concepts resolve from disk and
   are **clickable** — opening a linked document's graph — and unresolved links stay
   visible rather than disappearing, since a link may point at knowledge not yet written.
+* **Obsidian vaults** — a note that uses `[[wikilinks]]` or dataview `key:: value` fields,
+  or that sits in a folder with `.obsidian/`, renders as the whole vault's link graph with
+  the opened note leading. Wikilinks inside code blocks, inline code and HTML comments
+  (template boilerplate, dataview queries) are ignored, so they don't create phantom links.
+  Links to notes that don't exist yet stay visible in Detailed view. Plain Markdown files
+  outside a vault still get the document outline.
 * **Visual Web** command prompts for a URL, opens it in the built-in Simple
   Browser, fetches the *served* HTML, and graphs it through the HTML converter
   (served HTML only; client-rendered SPA content won't appear).
 * **Visual API** command prompts for a URL, fetches the *served* API document, and
   graphs its endpoints through the OpenAPI converter.
+* **Visual Web API** command prompts for a page URL (and an optional API key), opens it in
+  the built-in Simple Browser, then reads the served HTML and up to `webapi.maxScripts`
+  of its script files to find the backend endpoints the page's code calls. Endpoints are
+  grouped by host; each host is checked for an OpenAPI descriptor first, and only where none
+  exists are a bounded number of parameterless GETs called to infer structures. Scripts and
+  probes are fetched one at a time, never in a burst. Because the page's JavaScript is not
+  executed, endpoints a page builds at runtime are not discovered.
+* **Git change hotspots** put a cold / warm / hot dot before the file name in the info panel,
+  with the detail on hover: when the file last changed, how many times, the week/month/year
+  split, and the top three authors with a total. Read through VS Code's built-in Git
+  extension; a file with no history shows no dot rather than a guessed one. Turn off with
+  `linear-code.history.enable`.
 * **Visual MCP** command prompts for an MCP server URL (and an optional API key),
   opens an MCP session and graphs the server's tools with their input/output
   schemas, plus its prompts and resources. Detailed view expands each tool's input
