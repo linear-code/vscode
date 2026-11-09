@@ -1,6 +1,8 @@
 # Change Log
 
-**0.3.6** - new **Obsidian** vault knowledge graph — every note a node colored by type, every [[wikilink]] a labeled edge, with orphans and unresolved links in detailed view; 
+**0.3.7** - new **Visual LLM** command: search Hugging Face and map a model's architecture — layers, modules, tensor shapes, parameter counts and MoE active parameters — read from the checkpoint headers without downloading any weights;
+
+**0.3.6** - new **Obsidian** vault knowledge graph — every note a node colored by type, every wikilink a labeled edge, with orphans and unresolved links in detailed view; 
 new **LinkML** schema visualization — a YAML data model rendered as a conceptual class diagram with inheritance, associations, enums and the slots nothing uses; 
 new **git change hotspots** — a cold/warm/hot dot on the info panel with change counts and top authors;
 

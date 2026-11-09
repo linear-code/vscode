@@ -44,16 +44,18 @@ Use it to:
   the real result of calling a read-only tool.
 * **Graph a live web page or REST API.** Point **Visual Web** or **Visual API** at a URL
   and read the served page, or the API's endpoints and live response data.
-* **Find out which backends a web app talks to.** Point **Visual Web API** at a page and it
-  reads the served HTML and its scripts, works out which API endpoints the code calls, and
-  maps them grouped by host - with request and response structures where the host publishes
-  an OpenAPI descriptor or a safe GET can be sampled.
 * **See which files are churning.** Any file's preview carries a cold/warm/hot dot from its
   git history - how recently and how often it changed, and who has been changing it.
 * **See what a package really pulls in - before you install it.** **Visual Package**
   takes a name from PyPI, npm, crates.io, or RubyGems and draws its dependency tree:
   versions and version requirements, the optional extras each one hides behind a
   feature flag, and - on request - the packages that depend on it.
+* **Look inside an LLM without downloading it.** **Visual LLM** searches Hugging Face,
+  reads the chosen model's architecture from the checkpoint's own tensor headers (a few
+  kilobytes, never the weights), and draws it: embeddings, the decoder layers folded into
+  one `layers[0…23] ×24` node, attention and MLP blocks with their shapes, and each
+  module's share of the parameters - plus active parameters per token for mixture-of-experts
+  models.
 
 Everything renders locally in a VS Code webview - no server, no export step, and your
 files never leave the editor.
@@ -166,8 +168,8 @@ The **Visual Project** command walks a folder and maps its structure: each direc
 | **OTHER:** |||
 | WEB | `url` | Web page open and static structure (html, js) visualization like in HTML. |
 | REST API | `url` | REST API endpoints and structure visualization. |
-| WEB API | `url` | **Visual Web API** — open a page, then map the backend APIs its code calls: endpoints grouped by host, with request/response structures from each host's OpenAPI descriptor where it has one, or inferred from live responses where it doesn't. Static read of the served HTML and scripts only — the page's JavaScript is never executed, so requests a page assembles at runtime are not discovered. |
 | MCP server | `url` | MCP server map: tools with their input schemas, plus prompts and resources. |
+| LLM model | `name` | **Visual LLM** — search Hugging Face (or enter `org/name`), read the model's architecture from its safetensors headers with range requests (no weights downloaded), and map it: the model with its hyperparameters, parameter count, weight size and MoE active parameters; modules as nodes with params and share of the total; identical consecutive layers folded into one `×N` node. Compact shows weight matrices as rows (`q_proj: 896×896 +bias`); Detailed makes them nodes with exact shapes and dtypes, and adds the full `config.json` and the repository files. Gated models degrade to a model card unless a token (`$HF_TOKEN`) is supplied. |
 | NPM package | `name` | **Visual Package: NPM** — search a package on npmjs.com, resolve its latest manifest, and map the dependency tree: packages as nodes (version, engines, and `core packages`/`extra packages` lists with counts) linked by `depends` relations labeled with the semver range; shared dependencies are reused nodes. Compact shows the package and its `dependencies`; Detailed adds `peerDependencies`/`optionalDependencies` (edge-labeled `peer`/`optional`) and one deeper tier, fetched lazily only when you switch. `devDependencies` are excluded. Optionally adds **dependant counts** — npm publishes no list of dependent names, only totals. |
 | Gem package | `name` | **Visual Package: Gem** — search a gem on rubygems.org, resolve its latest version, and map the dependency tree: gems as nodes (version, summary, license, and a `core packages` list with count) linked by `depends` relations labeled with the requirement; shared dependencies are reused nodes. RubyGems has no optional-dependency concept, so `development` dependencies are excluded and there is no extra tier — Detailed adds the deeper layer. Optionally adds one layer of green **dependant** gems; the API returns names only, so the first N are shown with the true total as a row. |
 | Crates package | `name` | **Visual Package: Crates** — search a crate on crates.io, resolve its latest non-yanked version from Cargo's sparse index, and map the dependency tree: crates as nodes (version, rust-version, and `core packages`/`extra packages` lists with counts) linked by `depends` relations labeled with the version requirement; shared dependencies are reused nodes. Compact shows the crate and its normal dependencies; Detailed adds the **optional, feature-gated** ones — each edge labeled with the Cargo feature that enables it (`derive`) — plus one deeper tier, fetched lazily. `dev` and `build` dependencies are excluded. Optionally adds one layer of green **dependant** crates — the crates that depend on this one, most-depended-on first. |
@@ -201,13 +203,6 @@ The **Visual Project** command walks a folder and maps its structure: each direc
   (served HTML only; client-rendered SPA content won't appear).
 * **Visual API** command prompts for a URL, fetches the *served* API document, and
   graphs its endpoints through the OpenAPI converter.
-* **Visual Web API** command prompts for a page URL (and an optional API key), opens it in
-  the built-in Simple Browser, then reads the served HTML and up to `webapi.maxScripts`
-  of its script files to find the backend endpoints the page's code calls. Endpoints are
-  grouped by host; each host is checked for an OpenAPI descriptor first, and only where none
-  exists are a bounded number of parameterless GETs called to infer structures. Scripts and
-  probes are fetched one at a time, never in a burst. Because the page's JavaScript is not
-  executed, endpoints a page builds at runtime are not discovered.
 * **Git change hotspots** put a cold / warm / hot dot before the file name in the info panel,
   with the detail on hover: when the file last changed, how many times, the week/month/year
   split, and the top three authors with a total. Read through VS Code's built-in Git
@@ -226,6 +221,10 @@ The **Visual Project** command walks a folder and maps its structure: each direc
   `node_modules`, build outputs) are skipped.
 * **Visual Package: (PyPi | Crates | Npm | Gems):** command prompts for a package name, connects to package management repository and
   maps its dependent packages structure to graph nodes and relation.
+* **Visual LLM** command prompts for a Hugging Face model id or search text (and an
+  optional token for gated models), lets you pick a model from the search results and
+  maps its architecture — layers, modules and tensor shapes, parameter counts and
+  shares, hyperparameters — read from the checkpoint headers without downloading weights.
 
 
 ## Notes
